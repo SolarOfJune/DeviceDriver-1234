@@ -2,8 +2,6 @@
 #include <windows.h>
 #include "DeviceDriver.h"
 
-using namespace std;
-
 DeviceDriver::DeviceDriver(FlashMemoryDevice* hardware) : m_hardware(hardware)
 {}
 
@@ -14,13 +12,15 @@ int DeviceDriver::read(long address)
     {
         Sleep(DELAY_TIME);
         if (read_value != (int)(m_hardware->read(address)))
-            throw exception("ReadFailException");
+            throw ReadFailException();
     }
     return read_value;
 }
 
 void DeviceDriver::write(long address, int data)
 {
-    // TODO: implement this method
-    m_hardware->write(address, (unsigned char)data);
+    int read_value = (int)(m_hardware->read(address));
+    if (read_value != EMPTY_VAL)
+		throw WriteFailException();
+	m_hardware->write(address, (unsigned char)data);
 }
