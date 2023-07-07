@@ -20,8 +20,7 @@ int DeviceDriver::read(long address)
 void DeviceDriver::write(long address, int data)
 {
     int read_value = (int)(m_hardware->read(address));
-    if (read_value == EMPTY_VAL)
-		m_hardware->write(address, (unsigned char)data);
-    else
-        throw WriteFailException();
+    if (read_value != EMPTY_VAL)
+		throw WriteFailException();
+	m_hardware->write(address, (unsigned char)data);
 }
