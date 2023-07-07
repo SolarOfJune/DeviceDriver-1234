@@ -16,6 +16,7 @@ class FixtureDeviceDriver : public testing::Test
 public:
 	MockFlashMemoryDevice mock;
 	DeviceDriver driver{ &mock };
+	Application app{ &driver };
 };
 
 TEST_F(FixtureDeviceDriver, ReadFail) {
@@ -40,9 +41,35 @@ TEST_F(FixtureDeviceDriver, WriteFail) {
 
 TEST_F(FixtureDeviceDriver, WritePass) {
 	EXPECT_CALL(mock, read(0x00))
-		.WillRepeatedly(Return(0xFF));
+		.WillRepeatedly(Return(EMPTY_VAL));
 	driver.write(0x00, 0x2);
 	EXPECT_CALL(mock, read(0x00))
 		.WillRepeatedly(Return(0x2));
 	EXPECT_EQ(0x2, driver.read(0x00));
+}
+
+TEST_F(FixtureDeviceDriver, AppReadAndPrint)
+{
+	int startAddr = 0x200;
+	int endAddr = 0x204;
+	int cnt = 0;
+	for (int addr = startAddr; addr < endAddr; addr++)
+	{
+		EXPECT_CALL(mock, read(addr))
+			.WillRepeatedly(Return(0x5 + cnt));
+		cnt++;
+	}
+
+	app.ReadAndPrint(0x200, 0x204);
+}
+
+TEST_F(FixtureDeviceDriver, AppWriteAll)
+{
+	for (int addr = WRITE_MIN_ADDRESS; addr < WRITE_MAX_ADDRESS; addr++)
+	{
+		EXPECT_CALL(mock, read(addr))
+			.WillRepeatedly(Return(EMPTY_VAL));
+	}
+	
+	app.WriteAll(0xA);
 }

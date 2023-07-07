@@ -1,5 +1,6 @@
 #pragma once
 #define interface struct
+#define EMPTY_VAL   (0xFF)
 
 /*
  * This class represents the interface to a Flash Memory Device. The hardware has only two methods - 'read' and 'write'
