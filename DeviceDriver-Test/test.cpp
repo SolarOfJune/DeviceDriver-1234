@@ -39,3 +39,16 @@ TEST(TestCaseName, WriteFail) {
 	DeviceDriver driver{ &mock };
 	EXPECT_THROW(driver.write(0x00, 0x2), exception);
 }
+
+TEST(TestCaseName, WritePass) {
+	MockFlashMemoryDevice mock;
+	EXPECT_CALL(mock, read(0x00))
+		.WillRepeatedly(Return(0xFF));
+
+	DeviceDriver driver{ &mock };
+	driver.write(0x00, 0x2);
+	EXPECT_CALL(mock, read(0x00))
+		.WillRepeatedly(Return(0x2));
+
+	EXPECT_EQ(0x2, driver.read(0x00));
+}
