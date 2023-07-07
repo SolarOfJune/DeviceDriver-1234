@@ -10,4 +10,8 @@ public:
 
 protected:
     FlashMemoryDevice* m_hardware;
+
+private:
+    const int READ_CNT = 5;
+    const int DELAY_TIME = 200;
 };
