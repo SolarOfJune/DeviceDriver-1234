@@ -23,5 +23,4 @@ protected:
 private:
     const int READ_CNT = 5;
     const int DELAY_TIME = 200;
-    const int EMPTY_VAL = 0xFF;
 };

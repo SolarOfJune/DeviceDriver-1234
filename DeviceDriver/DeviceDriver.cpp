@@ -1,6 +1,9 @@
 #include <stdexcept>
 #include <windows.h>
+#include <iostream>
 #include "DeviceDriver.h"
+
+using namespace std;
 
 DeviceDriver::DeviceDriver(FlashMemoryDevice* hardware) : m_hardware(hardware)
 {}
@@ -24,3 +27,32 @@ void DeviceDriver::write(long address, int data)
 		throw WriteFailException();
 	m_hardware->write(address, (unsigned char)data);
 }
+
+class Application
+{
+public:
+	explicit Application(DeviceDriver* kernel)
+		: kernel(kernel)
+	{
+	}
+
+	void ReadAndPrint(int startAddr, int endAddr)
+    {
+        for (int addr = startAddr; addr < endAddr; addr++)
+        {
+            int read_value = kernel->read(addr);
+            cout << read_value << ' ';
+        }
+    }
+    void WriteAll(int value)
+    {
+	    for (int addr = WRITE_MIN_ADDRESS; addr < WRITE_MAX_ADDRESS; addr++)
+	    {
+            kernel->write(addr, value);
+	    }
+    }
+private:
+    DeviceDriver* kernel;
+    const int WRITE_MIN_ADDRESS = 0x00;
+    const int WRITE_MAX_ADDRESS = 0x04;
+};

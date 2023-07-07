@@ -16,6 +16,7 @@ class FixtureDeviceDriver : public testing::Test
 public:
 	MockFlashMemoryDevice mock;
 	DeviceDriver driver{ &mock };
+	Application app{ &driver };
 };
 
 TEST_F(FixtureDeviceDriver, ReadFail) {
@@ -40,9 +41,36 @@ TEST_F(FixtureDeviceDriver, WriteFail) {
 
 TEST_F(FixtureDeviceDriver, WritePass) {
 	EXPECT_CALL(mock, read(0x00))
-		.WillRepeatedly(Return(0xFF));
+		.WillRepeatedly(Return(EMPTY_VAL));
 	driver.write(0x00, 0x2);
 	EXPECT_CALL(mock, read(0x00))
 		.WillRepeatedly(Return(0x2));
 	EXPECT_EQ(0x2, driver.read(0x00));
+}
+
+TEST_F(FixtureDeviceDriver, AppReadAndPrint)
+{
+	EXPECT_CALL(mock, read(0x200))
+		.WillRepeatedly(Return(0x5));
+	EXPECT_CALL(mock, read(0x201))
+		.WillRepeatedly(Return(0x6));
+	EXPECT_CALL(mock, read(0x202))
+		.WillRepeatedly(Return(0x7));
+	EXPECT_CALL(mock, read(0x203))
+		.WillRepeatedly(Return(0x8));
+
+	app.ReadAndPrint(0x200, 0x204);
+}
+
+TEST_F(FixtureDeviceDriver, AppWriteAll)
+{
+	EXPECT_CALL(mock, read(0x0))
+		.WillRepeatedly(Return(EMPTY_VAL));
+	EXPECT_CALL(mock, read(0x1))
+		.WillRepeatedly(Return(EMPTY_VAL));
+	EXPECT_CALL(mock, read(0x2))
+		.WillRepeatedly(Return(EMPTY_VAL));
+	EXPECT_CALL(mock, read(0x3))
+		.WillRepeatedly(Return(EMPTY_VAL));
+	app.WriteAll(0xA);
 }
