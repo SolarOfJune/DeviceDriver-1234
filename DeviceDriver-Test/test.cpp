@@ -50,27 +50,26 @@ TEST_F(FixtureDeviceDriver, WritePass) {
 
 TEST_F(FixtureDeviceDriver, AppReadAndPrint)
 {
-	EXPECT_CALL(mock, read(0x200))
-		.WillRepeatedly(Return(0x5));
-	EXPECT_CALL(mock, read(0x201))
-		.WillRepeatedly(Return(0x6));
-	EXPECT_CALL(mock, read(0x202))
-		.WillRepeatedly(Return(0x7));
-	EXPECT_CALL(mock, read(0x203))
-		.WillRepeatedly(Return(0x8));
+	int startAddr = 0x200;
+	int endAddr = 0x204;
+	int cnt = 0;
+	for (int addr = startAddr; addr < endAddr; addr++)
+	{
+		EXPECT_CALL(mock, read(addr))
+			.WillRepeatedly(Return(0x5 + cnt));
+		cnt++;
+	}
 
 	app.ReadAndPrint(0x200, 0x204);
 }
 
 TEST_F(FixtureDeviceDriver, AppWriteAll)
 {
-	EXPECT_CALL(mock, read(0x0))
-		.WillRepeatedly(Return(EMPTY_VAL));
-	EXPECT_CALL(mock, read(0x1))
-		.WillRepeatedly(Return(EMPTY_VAL));
-	EXPECT_CALL(mock, read(0x2))
-		.WillRepeatedly(Return(EMPTY_VAL));
-	EXPECT_CALL(mock, read(0x3))
-		.WillRepeatedly(Return(EMPTY_VAL));
+	for (int addr = WRITE_MIN_ADDRESS; addr < WRITE_MAX_ADDRESS; addr++)
+	{
+		EXPECT_CALL(mock, read(addr))
+			.WillRepeatedly(Return(EMPTY_VAL));
+	}
+	
 	app.WriteAll(0xA);
 }

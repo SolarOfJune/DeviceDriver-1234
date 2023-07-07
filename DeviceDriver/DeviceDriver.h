@@ -1,6 +1,9 @@
 #pragma once
 #include "FlashMemoryDevice.h"
 
+#define WRITE_MIN_ADDRESS   (0x00)
+#define WRITE_MAX_ADDRESS   (0x04)
+
 using namespace std;
 
 class ReadFailException: public exception

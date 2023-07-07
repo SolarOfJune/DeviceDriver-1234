@@ -53,6 +53,4 @@ public:
     }
 private:
     DeviceDriver* kernel;
-    const int WRITE_MIN_ADDRESS = 0x00;
-    const int WRITE_MAX_ADDRESS = 0x04;
 };
